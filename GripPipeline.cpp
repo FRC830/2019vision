@@ -20,33 +20,29 @@ GripPipeline::GripPipeline() {
 *
 */
 void GripPipeline::Process(cv::Mat &source){
-	//Step Resize_Image0:
-	//input
+	// Resize Image
 	cv::Mat resizeImageInput = source;
-	double resizeImageWidth = 320.0;  // default Double
-	double resizeImageHeight = 240.0;  // default Double
+	double resizeImageWidth = 320.0;
+	double resizeImageHeight = 240.0;
 	int resizeImageInterpolation = cv::INTER_CUBIC;
 	resizeImage(resizeImageInput, resizeImageWidth, resizeImageHeight, resizeImageInterpolation, this->resizeImageOutput);
-	//Step HSV_Threshold0:
-	//input
+	// Find Image Part That matches HSV Threshold
 	cv::Mat hsvThresholdInput = resizeImageOutput;
 	double hsvThresholdHue[] = {SmartDashboard::GetNumber("Hue Min", 60), SmartDashboard::GetNumber("Hue Max",90)};
 	double hsvThresholdSaturation[] = {SmartDashboard::GetNumber("Sat Min", 70), SmartDashboard::GetNumber("Sat Max", 255)};
 	double hsvThresholdValue[] = {SmartDashboard::GetNumber("Val Min", 130), SmartDashboard::GetNumber("Val Max", 255)};
 	hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, this->hsvThresholdOutput);
-	//Step CV_erode0:
-	//input
+	// Remove part of image that matches HSV Threshold
 	cv::Mat cvErodeSrc = hsvThresholdOutput;
 	cv::Mat cvErodeKernel;
 	cv::Point cvErodeAnchor(-1, -1);
-	double cvErodeIterations = 1.0;  // default Double
+	double cvErodeIterations = 1.0;
     int cvErodeBordertype = cv::BORDER_CONSTANT;
 	cv::Scalar cvErodeBordervalue(-1);
 	cvErode(cvErodeSrc, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue, this->cvErodeOutput);
-	//Step Find_Contours0:
-	//input
+	// Find Contours on eroded image
 	cv::Mat findContoursInput = cvErodeOutput;
-	bool findContoursExternalOnly = false;  // default Boolean
+	bool findContoursExternalOnly = false;
 	findContours(findContoursInput, findContoursExternalOnly, this->findContoursOutput);
 	//Step Filter_Contours0:
 	//input
@@ -56,7 +52,7 @@ void GripPipeline::Process(cv::Mat &source){
 	rectangle_pairs.clear();
 	rectangles.clear();
 	
-
+	double min_
 	for (auto &cont : findContoursOutput){
 		cv::Rect temp = cv::boundingRect(cv::Mat(cont));
 		double ratio = temp.height/static_cast<double>(temp.width);
@@ -66,12 +62,14 @@ void GripPipeline::Process(cv::Mat &source){
 		}
 	}
 
-
+	// Finds pairs of rectangles that match criteria
+	double min_rect_ratio = 0.8;
+	double max_rect_ratio = 1.2;
 	if (rectangles.size()>1 && filterContoursOutput.size()>1) {
 		for (int i = 0; i<rectangles.size()-1; i++){
 			for (int j = i+1; j<rectangles.size(); j++){
 				double rect_ratio = static_cast<double>(rectangles[i].area())/rectangles[j].area();
-				if (rect_ratio > 0.8 && rect_ratio < 1.2){
+				if (rect_ratio > min_rect_ratio && rect_ratio < max_rect_ractio){
 					cv::rectangle(resizeImageOutput, rectangles[0], {0,255,255}, 2);
 					cv::rectangle(resizeImageOutput, rectangles[1], {0,255,255}, 2);
 
@@ -92,26 +90,28 @@ void GripPipeline::Process(cv::Mat &source){
 					}
 					cv::Point farPoint1 = findFarthestPoint(contour1, false);
 					cv::Point farPoint2 = findFarthestPoint(contour2, true);
-					if (farPoint1.y < (rect1.tl().y+rect1.br().y)/2 && farPoint2.y > (rect2.tl().y+rect2.br().y)/2){
+					double rect1Midpoint = (rect1.tl().y+rect1.br().y)/2;
+					double rect2Midpoint = (rect2.tl().y+rect2.br().y)/2;
+					if (farPoint1.y < rect1Midpoint && farPoint2.y > rect2Midpoint){
 						rectangle_pairs.push_back({rectangles[i],rectangles[j]});				
 					}
 				}
 			}
 		}
 	}
-//  //scp *.cpp *.h pi@10.8.30.11:RaspberryPiCamera;ssh -t pi@10.8.30.11 'cd RaspberryPiCamera;make clean;make install
-	
-	for (auto rect_pair : rectangle_pairs){
+	// Draws All Rectangle Pairs
+	for (auto rect_pair : rectangle_pairs) {
 		cv::rectangle(resizeImageOutput, rect_pair[0], {0,255,255}, 2);
 		cv::rectangle(resizeImageOutput, rect_pair[1], {0,255,255}, 2);
 	}
 }	
-
+// Checks if the area of A > B
 bool GripPipeline::compareRectAreas(cv::Rect a, cv::Rect b){
 	return static_cast<double>(a.area()) > static_cast<double>(b.area());
 }
-
-cv::Point GripPipeline::findFarthestPoint(std::vector<cv::Point> contour, bool direction/*true is left, false is right*/){
+// Finds the furthest point in the specified direction
+// true is left, false is right
+cv::Point GripPipeline::findFarthestPoint(std::vector<cv::Point> contour, bool direction){
 	cv::Point temp_point = contour[0];
 	for (cv::Point iterator : contour){
 		if ((!direction && iterator.x > temp_point.x) || (direction && iterator.x < temp_point.x)){
