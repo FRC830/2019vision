@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
   if (cameras.size() >= 1) {
     std::thread([&] {
       frc::VisionRunner<GripPipeline> runner(cameras[0], new GripPipeline(), [&](GripPipeline &pipeline) {
-        outputStream.PutFrame(pipeline.hsvThresholdOutput);
+        outputStream.PutFrame(pipeline.resizeImageOutput);
       });
       /* something like this for GRIP:
       frc::VisionRunner<MyPipeline> runner(cameras[0], new grip::GripPipeline(),
