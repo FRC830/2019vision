@@ -11,21 +11,21 @@
 ### Building on desktop
 
 
-##### One time setup
+#### One time setup
 
-Install the Raspbian compiler [1] as well as GNU make [2].
+Install the [Raspbian compiler][1] as well as [GNU make ][2].
 
 [1]: https://github.com/wpilibsuite/raspbian-toolchain/releases
-[2]: (windows) http://gnuwin32.sourceforge.net/packages/make.htm
+[2]: http://gnuwin32.sourceforge.net/packages/make.htm
 
 
-##### Building
+#### Building
 
 
 Run "make"
 
 
-##### Deploying
+#### Deploying
 
 
 On the rPi web dashboard:
