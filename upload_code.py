@@ -3,14 +3,16 @@ from websocket import create_connection
 import json
 import subprocess
 
-print("""Prerequisites:
+"""
+Prerequisites:
 Choco - https://chocolatey.org/install#install-with-cmdexe
 Python3 - choco install python
-Websocket - pip install websocket-client""")
+Websocket - pip install websocket-client
+"""
 
 ip = "10.8.30.11"
 directory = "RaspberryPiCamera"
-command = "cd {};make clean;make install;make".format(directory)
+command = "cd {};make clean;make install".format(directory)
 
 print("Connecting to Raspberry Pi Server @ {}".format(ip))
 connection = create_connection("ws://" + ip)
