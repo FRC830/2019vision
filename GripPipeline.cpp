@@ -1,10 +1,18 @@
 #include "GripPipeline.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <iostream>
 /**
 * Initializes a GripPipeline.
 */
 using namespace frc;
-GripPipeline::GripPipeline() {}
+GripPipeline::GripPipeline() {
+	SmartDashboard::PutNumber("Hue Min", 60);
+	SmartDashboard::PutNumber("Hue Max", 90);
+	SmartDashboard::PutNumber("Sat Min", 70);
+	SmartDashboard::PutNumber("Sat Max", 255);
+	SmartDashboard::PutNumber("Val Min", 130);
+	SmartDashboard::PutNumber("Val Max", 255);
+}
 /**
 * Runs an iteration of the Pipeline and updates outputs.
 *
@@ -22,9 +30,9 @@ void GripPipeline::Process(cv::Mat &source){
 	//Step HSV_Threshold0:
 	//input
 	cv::Mat hsvThresholdInput = resizeImageOutput;
-	double hsvThresholdHue[] = {60, 90};
-	double hsvThresholdSaturation[] = {30, 255};
-	double hsvThresholdValue[] = {180, 255};
+	double hsvThresholdHue[] = {SmartDashboard::GetNumber("Hue Min", 60), SmartDashboard::GetNumber("Hue Max",90)};
+	double hsvThresholdSaturation[] = {SmartDashboard::GetNumber("Sat Min", 70), SmartDashboard::GetNumber("Sat Max", 255)};
+	double hsvThresholdValue[] = {SmartDashboard::GetNumber("Val Min", 130), SmartDashboard::GetNumber("Val Max", 255)};
 	hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, this->hsvThresholdOutput);
 	//Step CV_erode0:
 	//input
@@ -43,58 +51,60 @@ void GripPipeline::Process(cv::Mat &source){
 	//Step Filter_Contours0:
 	//input
 
-	if (findContoursOutput.size() == 0){
-		return;
-	}
-
-// 	for (auto &cont : findContoursOutput){
-// 		cv::Rect temp = cv::boundingRect(cv::Mat(cont));
-// 		double ratio = temp.height/static_cast<double>(temp.width);
-// 		if (ratio > 1.5 && ratio < 3.5){
-// 			filterContoursOutput.push_back(cont);
-// 			rectangles.push_back(temp);			
-// 		}
-// 	}
-
-	for (int i = 0; i<rectangles.size()-1; i++){
-		for (int j = i+1; j<rectangles.size(); j++){
-			double rect_ratio = static_cast<double>(rectangles[i].area())/rectangles[j].area();
-			if (rect_ratio > 0.8 && rect_ratio < 1.2){
-				cv::Rect rect1;
-				cv::Rect rect2;
-				std::vector<cv::Point> contour1;
-				std::vector<cv::Point> contour2;
-				if (rectangles[i].x < rectangles[j].x){
-					rect1 = rectangles[j];
-					contour1 = filterContoursOutput[j];
-					rect2 = rectangles[i];
-					contour2 = filterContoursOutput[i];
-				} else {
-					rect1 = rectangles[i];
-					contour1 = filterContoursOutput[i];
-					rect2 = rectangles[j];
-					contour2 = filterContoursOutput[j];
-				}
-				cv::Point farPoint1 = findFarthestPoint(contour1, false);
-				cv::Point farPoint2 = findFarthestPoint(contour2, true);
-				if (farPoint1.y < (rect1.tl().y+rect1.br().y)/2 && farPoint2.y > (rect2.tl().y+rect2.br().y)/2){
-					rectangle_pairs.push_back({rectangles[i],rectangles[j]});				
-				}
-			}
-		}
-	}
-//  //scp *.cpp *.h pi@10.8.30.11:RaspberryPiCamera;ssh -t pi@10.8.30.11 'cd RaspberryPiCamera;make clean;make install;make'
-
-
-// 	for (auto rect_pair : rectangle_pairs){
-// 		cv::rectangle(resizeImageOutput, rect_pair[0], {0,255,255}, 2);
-// 		cv::rectangle(resizeImageOutput, rect_pair[1], {0,255,255}, 2);
-// 	}
-
+	filterContoursOutput.clear();
 	contour_pairs.clear();
 	rectangle_pairs.clear();
 	rectangles.clear();
 	
+
+	for (auto &cont : findContoursOutput){
+		cv::Rect temp = cv::boundingRect(cv::Mat(cont));
+		double ratio = temp.height/static_cast<double>(temp.width);
+		if (ratio > 1.5 && ratio < 3.5){
+			filterContoursOutput.push_back(cont);
+			rectangles.push_back(temp);			
+		}
+	}
+
+
+	if (rectangles.size()>1 && filterContoursOutput.size()>1) {
+		for (int i = 0; i<rectangles.size()-1; i++){
+			for (int j = i+1; j<rectangles.size(); j++){
+				double rect_ratio = static_cast<double>(rectangles[i].area())/rectangles[j].area();
+				if (rect_ratio > 0.8 && rect_ratio < 1.2){
+					cv::rectangle(resizeImageOutput, rectangles[0], {0,255,255}, 2);
+					cv::rectangle(resizeImageOutput, rectangles[1], {0,255,255}, 2);
+
+					cv::Rect rect1;
+					cv::Rect rect2;
+					std::vector<cv::Point> contour1;
+					std::vector<cv::Point> contour2;
+					if (rectangles[i].x < rectangles[j].x){
+						rect1 = rectangles[j];
+						contour1 = filterContoursOutput[j];
+						rect2 = rectangles[i];
+						contour2 = filterContoursOutput[i];
+					} else {
+						rect1 = rectangles[i];
+						contour1 = filterContoursOutput[i];
+						rect2 = rectangles[j];
+						contour2 = filterContoursOutput[j];
+					}
+					cv::Point farPoint1 = findFarthestPoint(contour1, false);
+					cv::Point farPoint2 = findFarthestPoint(contour2, true);
+					if (farPoint1.y < (rect1.tl().y+rect1.br().y)/2 && farPoint2.y > (rect2.tl().y+rect2.br().y)/2){
+						rectangle_pairs.push_back({rectangles[i],rectangles[j]});				
+					}
+				}
+			}
+		}
+	}
+//  //scp *.cpp *.h pi@10.8.30.11:RaspberryPiCamera;ssh -t pi@10.8.30.11 'cd RaspberryPiCamera;make clean;make install
+	
+	for (auto rect_pair : rectangle_pairs){
+		cv::rectangle(resizeImageOutput, rect_pair[0], {0,255,255}, 2);
+		cv::rectangle(resizeImageOutput, rect_pair[1], {0,255,255}, 2);
+	}
 }	
 
 bool GripPipeline::compareRectAreas(cv::Rect a, cv::Rect b){
