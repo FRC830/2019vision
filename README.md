@@ -1,6 +1,5 @@
-=======================
-Building locally on rPi
-=======================
+
+### Building locally on rPi
 
 1) Run "make"
 2) Run "make install" (replaces /home/pi/runCamera)
@@ -8,28 +7,26 @@ Building locally on rPi
    restart service.
 
 
-===================
-Building on desktop
-===================
 
---------------
-One time setup
---------------
+### Building on desktop
+
+
+##### One time setup
 
 Install the Raspbian compiler [1] as well as GNU make [2].
 
 [1]: https://github.com/wpilibsuite/raspbian-toolchain/releases
 [2]: (windows) http://gnuwin32.sourceforge.net/packages/make.htm
 
---------
-Building
---------
+
+##### Building
+
 
 Run "make"
 
----------
-Deploying
----------
+
+##### Deploying
+
 
 On the rPi web dashboard:
 
