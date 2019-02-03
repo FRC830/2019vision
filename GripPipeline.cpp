@@ -72,8 +72,8 @@ void GripPipeline::Process(cv::Mat &source){
 			for (int j = i+1; j<rectangles.size(); j++){
 				double rect_ratio = static_cast<double>(rectangles[i].area())/rectangles[j].area();
 				if (rect_ratio > 0.8 && rect_ratio < 1.2){
-					cv::rectangle(resizeImageOutput, rectangles[0], {0,255,255}, 2);
-					cv::rectangle(resizeImageOutput, rectangles[1], {0,255,255}, 2);
+					cv::rectangle(resizeImageOutput, rectangles[i], {0,255,255}, 2);
+					cv::rectangle(resizeImageOutput, rectangles[j], {0,255,255}, 2);
 
 					cv::Rect rect1;
 					cv::Rect rect2;
