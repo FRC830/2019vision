@@ -42,15 +42,19 @@ void GripPipeline::Process(cv::Mat &source){
 	findContours(findContoursInput, findContoursExternalOnly, this->findContoursOutput);
 	//Step Filter_Contours0:
 	//input
-	
-	for (auto &cont : findContoursOutput){
-		cv::Rect temp = cv::boundingRect(cv::Mat(cont));
-		double ratio = temp.height/static_cast<double>(temp.width);
-		if (ratio > 1.5 && ratio < 3.5){
-			filterContoursOutput.push_back(cont);
-			rectangles.push_back(temp);			
-		}
+
+	if (findContoursOutput.size() == 0){
+		return;
 	}
+
+// 	for (auto &cont : findContoursOutput){
+// 		cv::Rect temp = cv::boundingRect(cv::Mat(cont));
+// 		double ratio = temp.height/static_cast<double>(temp.width);
+// 		if (ratio > 1.5 && ratio < 3.5){
+// 			filterContoursOutput.push_back(cont);
+// 			rectangles.push_back(temp);			
+// 		}
+// 	}
 
 	for (int i = 0; i<rectangles.size()-1; i++){
 		for (int j = i+1; j<rectangles.size(); j++){
@@ -79,11 +83,18 @@ void GripPipeline::Process(cv::Mat &source){
 			}
 		}
 	}
+//  //scp *.cpp *.h pi@10.8.30.11:RaspberryPiCamera;ssh -t pi@10.8.30.11 'cd RaspberryPiCamera;make clean;make install;make'
 
-	for (auto rect_pair : rectangle_pairs){
-		cv::rectangle(resizeImageOutput, rect_pair[0], {0,255,255}, 2);
-		cv::rectangle(resizeImageOutput, rect_pair[1], {0,255,255}, 2);
-	}
+
+// 	for (auto rect_pair : rectangle_pairs){
+// 		cv::rectangle(resizeImageOutput, rect_pair[0], {0,255,255}, 2);
+// 		cv::rectangle(resizeImageOutput, rect_pair[1], {0,255,255}, 2);
+// 	}
+
+	contour_pairs.clear();
+	rectangle_pairs.clear();
+	rectangles.clear();
+	
 }	
 
 bool GripPipeline::compareRectAreas(cv::Rect a, cv::Rect b){

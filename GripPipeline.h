@@ -44,6 +44,5 @@ class GripPipeline : public frc::VisionPipeline {
 		std::vector<std::array<cv::Rect, 2>> rectangle_pairs;
 		std::vector<std::array<std::vector<cv::Point>, 2>> contour_pairs;
 
-
 };
 
