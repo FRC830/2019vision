@@ -67,7 +67,7 @@ void GripPipeline::Process(cv::Mat &source){
 		for (int i = 0; i<rectangles.size()-1; i++){
 			for (int j = i+1; j<rectangles.size(); j++) {
 				double rect_ratio = static_cast<double>(rectangles[i].area())/rectangles[j].area();
-
+				//std::cout << "Ratio: " << rect_ratio << std::endl;
 				// Makes sure the areas are relatively equal
 				if (rect_ratio > min_area_ratio && rect_ratio < max_area_ratio){
 					//std::cout<<"Ratio valid: " << rect_ratio <<std::endl;
@@ -105,6 +105,10 @@ void GripPipeline::Process(cv::Mat &source){
 						int midX = (rect1.tl().x+rect2.br().x)/2;
 						cv::line(resizeImageOutput, cv::Point{midX,0}, cv::Point{midX,240}, {0,0,255},5);
 						SmartDashboard::PutNumber("Vision Mid X", midX);
+						SmartDashboard::PutNumber("Left Rect Area", rect1.area());
+						SmartDashboard::PutNumber("Right Rect Area", rect2.area());
+						double ratio = static_cast<double>(rect1.area()) / rect2.area();
+						std::cout << "Ratio: " << ratio << std::endl;
 						//std::cout<<"Valid orientation"<<std::endl;
 					} else {
 						//std::cout<<"Invalid orientation"<<std::endl;
