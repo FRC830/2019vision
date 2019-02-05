@@ -1,6 +1,7 @@
 #include "GripPipeline.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
+//#include <cmath>
 /**
 * Initializes a GripPipeline.
 */
@@ -105,10 +106,22 @@ void GripPipeline::Process(cv::Mat &source){
 						int midX = (rect1.tl().x+rect2.br().x)/2;
 						cv::line(resizeImageOutput, cv::Point{midX,0}, cv::Point{midX,240}, {0,0,255},5);
 						SmartDashboard::PutNumber("Vision Mid X", midX);
+
 						SmartDashboard::PutNumber("Left Rect Area", rect1.area());
+						double contour1Area = areaInsideRectContour(contour1);
+						SmartDashboard::PutNumber("Left Contour Area", contour1Area);
+
 						SmartDashboard::PutNumber("Right Rect Area", rect2.area());
-						double ratio = static_cast<double>(rect1.area()) / rect2.area();
-						std::cout << "Ratio: " << ratio << std::endl;
+						double contour2Area = areaInsideRectContour(contour2);
+						SmartDashboard::PutNumber("Right Contour Area", contour2Area);
+
+						std::cout << "Midpoint: " << midX << std::endl;
+						std::cout << "Left Area: " << contour1Area << std::endl;
+						std::cout << "Right Area: " << contour2Area << std::endl;
+						std::cout << std::endl;
+
+						//double ratio = static_cast<double>(rect1.area()) / rect2.area();
+						//std::cout << "Ratio: " << ratio << std::endl;
 						//std::cout<<"Valid orientation"<<std::endl;
 					} else {
 						//std::cout<<"Invalid orientation"<<std::endl;
@@ -121,7 +134,25 @@ void GripPipeline::Process(cv::Mat &source){
 		}
 	}
 }
-	
+
+double distance(cv::Point p1, cv::Point p2) {
+	double x_diff = p2.x - p1.x;
+	double y_diff = p2.y - p1.y;
+	double sum_of_squared_diffs = (x_diff * x_diff) + (y_diff * y_diff);
+	return sqrt(sum_of_squared_diffs); //Apparently there are 4 overloads of sqrt
+}
+
+double GripPipeline::areaInsideRectContour(std::vector<cv::Point> contour) {
+	cv::Point p0 = contour[0];
+	cv::Point p1 = contour[1];
+	cv::Point p2 = contour[2];
+
+	double l1 = distance(p0, p1);
+	double l2 = distance(p1, p2);
+
+	return l1 * l2;
+}
+
 // Checks if the area of A > B
 bool GripPipeline::compareRectAreas(cv::Rect a, cv::Rect b){
 	return static_cast<double>(a.area()) > static_cast<double>(b.area());

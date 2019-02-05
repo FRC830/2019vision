@@ -32,7 +32,8 @@ class GripPipeline : public frc::VisionPipeline {
 		void filterContours(std::vector<std::vector<cv::Point> > &, double , double , double , double , double , double , double [], double , double , double , double , std::vector<std::vector<cv::Point> > &);
 		static bool compareRectAreas(cv::Rect a, cv::Rect b);
 		static cv::Point findFarthestPoint(std::vector<cv::Point> contour, Direction dir);
-
+		double distance(cv::Point p1, cv::Point p2);
+		double areaInsideRectContour(std::vector<cv::Point> contour);
 	public:
 		GripPipeline();
 		void Process(cv::Mat &source);
