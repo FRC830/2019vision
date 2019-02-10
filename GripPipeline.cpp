@@ -102,7 +102,7 @@ void GripPipeline::Process(cv::Mat &source){
 
 					// Check that the rectangles are facing each other
 					if (farPoint1.y < rect1MidY && farPoint2.y < rect2MidY){
-						SmartDashboard::PutBoolean("Target Acquired", false);
+						SmartDashboard::PutBoolean("Target Acquired", true);
 						
 						cv::rectangle(resizeImageOutput, rect1, {0,255,255}, 2);
 						cv::rectangle(resizeImageOutput, rect2, {0,255,255}, 2);
