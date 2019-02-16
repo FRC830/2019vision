@@ -22,7 +22,7 @@ GripPipeline::GripPipeline() {
 */
 void GripPipeline::Process(cv::Mat &source){
 	// Resize Image
-	SmartDashboard::putBoolean("Target Acquired", false);
+	SmartDashboard::PutBoolean("Target Acquired", false);
 	cv::Mat resizeImageInput = source;
 	double resizeImageWidth = 320.0;
 	double resizeImageHeight = 240.0;
