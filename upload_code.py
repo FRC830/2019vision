@@ -12,7 +12,7 @@ Websocket - pip install websocket-client
 """
 
 ip = "10.8.30.11"
-directory = "RaspberryPiCamera"
+directory = "2019vision"
 command = "cd {};make clean;make install".format(directory)
 
 print("Connecting to Raspberry Pi Server @ {}".format(ip))
