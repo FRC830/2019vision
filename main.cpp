@@ -176,6 +176,8 @@ cs::UsbCamera StartCamera(const CameraConfig& config) {
   camera.SetConfigJson(config.config);
   camera.SetConnectionStrategy(cs::VideoSource::kConnectionKeepOpen);
   camera.SetFPS(30);
+  camera.SetExposureManual(25);
+  camera.SetExposureHoldCurrent();
 
   if (config.streamConfig.is_object())
     server.SetConfigJson(config.streamConfig);
