@@ -22,7 +22,6 @@ GripPipeline::GripPipeline() {
 */
 void GripPipeline::Process(cv::Mat &source){
 	// Resize Image
-	SmartDashboard::PutBoolean("Target Acquired", false);
 	cv::Mat resizeImageInput = source;
 	double resizeImageWidth = 320.0;
 	double resizeImageHeight = 240.0;
@@ -122,14 +121,18 @@ void GripPipeline::Process(cv::Mat &source){
 						//std::cout << "Ratio: " << ratio << std::endl;
 						//std::cout<<"Valid orientation"<<std::endl;
 					} else {
+						SmartDashboard::PutBoolean("Target Acquired", false);
 						//std::cout<<"Invalid orientation"<<std::endl;
 					}
 				} else {
+					SmartDashboard::PutBoolean("Target Acquired", false);
 					//std::cout<<"Bad ratio: " << rect_ratio <<std::endl;
 				}
 				//std::cout<<std::endl;
 			}
 		}
+	} else {
+		SmartDashboard::PutBoolean("Target Acquired", false);
 	}
 }
 
