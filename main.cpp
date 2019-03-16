@@ -19,6 +19,7 @@
 #include <wpi/raw_ostream.h>
 
 #include "GripPipeline.h"
+#include "CargoGripPipeline.h"
 #include "cameraserver/CameraServer.h"
 
 /*
@@ -215,6 +216,9 @@ int main(int argc, char* argv[]) {
     std::thread([&] {
       frc::VisionRunner<GripPipeline> runner(cameras[0], new GripPipeline(), [&](GripPipeline &pipeline) {
         outputStream.PutFrame(pipeline.resizeImageOutput);
+      });
+      frc::VisionRunner<CargoGripPipeline> runner(cameras[0], new CargoGripPipeline(), [&](CargoGripPipeline &pipeline) {
+        outputStream.PutFrame(pipeline.hslThresholdOutput);
       });
       /* something like this for GRIP:
       frc::VisionRunner<MyPipeline> runner(cameras[0], new grip::GripPipeline(),
