@@ -209,6 +209,7 @@ int main(int argc, char* argv[]) {
 
   frc::CameraServer &server = *frc::CameraServer::GetInstance();
   auto outputStream = server.PutVideo("Raspberry Pi Processed", 320, 240);
+  auto outputStream = server.PutVideo("Raspberry Pi Processed", 320, 240);
 
   // start image processing on camera 0 if present
   std::cout << "size="<<cameras.size()<<"\n";
@@ -217,8 +218,8 @@ int main(int argc, char* argv[]) {
       frc::VisionRunner<GripPipeline> runner(cameras[0], new GripPipeline(), [&](GripPipeline &pipeline) {
         outputStream.PutFrame(pipeline.resizeImageOutput);
       });
-      frc::VisionRunner<CargoGripPipeline> runner(cameras[0], new CargoGripPipeline(), [&](CargoGripPipeline &pipeline) {
-        outputStream.PutFrame(pipeline.hslThresholdOutput);
+      frc::VisionRunner<CargoGripPipeline> runner(cameras[0], new CargoGripPipeline(), [&](CargoGripPipeline &cargoPipeline) {
+        outputStream.PutFrame(cargoPipeline.GetHslThresholdOutput());
       });
       /* something like this for GRIP:
       frc::VisionRunner<MyPipeline> runner(cameras[0], new grip::GripPipeline(),
