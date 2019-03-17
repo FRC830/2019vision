@@ -30,6 +30,9 @@ void CargoGripPipeline::Process(cv::Mat& source0){
 	if (findBlobsOutput.size > 0){
 		findBlobsOutput.Sort(0,findBlobsOutput.size,compareBlobs);
 		Smartdashboard::PutNumber("Cargo Mid X", findBlobsOutput[0].x);
+		Smartdashboard::PutBoolean("Cargo Sighted", true);
+	} else {
+		Smartdashboard::PutBoolean("Cargo Sighted", false);
 	}
 }
 
