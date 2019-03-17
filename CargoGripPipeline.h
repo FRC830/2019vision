@@ -12,6 +12,8 @@
 #include <string>
 #include <math.h>
 
+namespace grip {
+
 /**
 * A representation of the different types of blurs that can be used.
 *
@@ -27,14 +29,22 @@ enum BlurType {
 class CargoGripPipeline {
 	private:
 		cv::Mat blurOutput;
-		cv::Mat hslThresholdOutput;
+		cv::Mat hsvThresholdOutput;
+		std::vector<cv::KeyPoint> findBlobsOutput;
 		void blur(cv::Mat &, BlurType &, double , cv::Mat &);
-		void hslThreshold(cv::Mat &, double [], double [], double [], cv::Mat &);
+		void hsvThreshold(cv::Mat &, double [], double [], double [], cv::Mat &);
+		void findBlobs(cv::Mat &, double , double [], bool , std::vector<cv::KeyPoint> &);
+		bool compareBlob(cv::KeyPoint a, cv::KeyPoint b);
 
 	public:
 		CargoGripPipeline();
 		void Process(cv::Mat& source0);
 		cv::Mat* GetBlurOutput();
-		cv::Mat* GetHslThresholdOutput();
+		cv::Mat* GetHsvThresholdOutput();
+		std::vector<cv::KeyPoint>* GetFindBlobsOutput();
 };
+
+
+} // end namespace grip
+
 
