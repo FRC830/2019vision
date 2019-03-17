@@ -12,8 +12,6 @@
 #include <string>
 #include <math.h>
 
-namespace grip {
-
 /**
 * A representation of the different types of blurs that can be used.
 *
@@ -43,8 +41,3 @@ class CargoGripPipeline {
 		cv::Mat* GetHsvThresholdOutput();
 		std::vector<cv::KeyPoint>* GetFindBlobsOutput();
 };
-
-
-} // end namespace grip
-
-

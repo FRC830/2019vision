@@ -218,8 +218,8 @@ int main(int argc, char* argv[]) {
       frc::VisionRunner<GripPipeline> runner(cameras[0], new GripPipeline(), [&](GripPipeline &pipeline) {
         outputStream.PutFrame(pipeline.resizeImageOutput);
       });
-      frc::VisionRunner<CargoGripPipeline> runner(cameras[0], new CargoGripPipeline(), [&](CargoGripPipeline &cargoPipeline) {
-        cargoOutputStream.PutFrame(cargoPipeline.GetHslThresholdOutput());
+      frc::VisionRunner<CargoGripPipeline> runner2(cameras[1], new CargoGripPipeline(), [&](CargoGripPipeline &cargoPipeline) {
+        cargoOutputStream.PutFrame(cargoPipeline.GetHsvThresholdOutput());
       });
       /* something like this for GRIP:
       frc::VisionRunner<MyPipeline> runner(cameras[0], new grip::GripPipeline(),
