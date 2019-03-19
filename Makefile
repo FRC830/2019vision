@@ -12,7 +12,7 @@ install: build
 clean:
 	rm ${EXE} *.o
 
-${EXE}: main.o GripPipeline.o
+${EXE}: main.o GripPipeline.o CargoGripPipeline.o
 	${CXX} -pthread -o $@ $^ \
 	    -Llib \
 	    -lwpilibc \

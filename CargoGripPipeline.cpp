@@ -1,5 +1,7 @@
 #include "CargoGripPipeline.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
+using namespace frc;
 CargoGripPipeline::CargoGripPipeline() {
 }
 /**
@@ -27,17 +29,18 @@ void CargoGripPipeline::Process(cv::Mat& source0){
 	bool findBlobsDarkBlobs = false;  // default Boolean
 	findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, this->findBlobsOutput);
 
-	if (findBlobsOutput.size > 0){
-		findBlobsOutput.Sort(0,findBlobsOutput.size,compareBlobs);
-		Smartdashboard::PutNumber("Cargo Mid X", findBlobsOutput[0].x);
-		Smartdashboard::PutBoolean("Cargo Sighted", true);
+	if (findBlobsOutput.size() > 0){
+		
+		std::sort(findBlobsOutput.begin(),findBlobsOutput.end(),compareBlob);
+		SmartDashboard::PutNumber("Cargo Mid X", findBlobsOutput[0].pt.x);
+		SmartDashboard::PutBoolean("Cargo Sighted", true);
 	} else {
-		Smartdashboard::PutBoolean("Cargo Sighted", false);
+		SmartDashboard::PutBoolean("Cargo Sighted", false);
 	}
 }
 
-bool CargoGripPipeline::compareBlobs(cv::KeyPoint a, cv::KeyPoint b){
-	return a.size() < b.size();
+bool CargoGripPipeline::compareBlob(cv::KeyPoint a, cv::KeyPoint b){
+	return a.size < b.size;
 }
 
 /**
